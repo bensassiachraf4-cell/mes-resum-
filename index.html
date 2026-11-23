@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="StudyHub ISET Nabeul — cours, résumés, podcasts, vidéos, cartes mentales et TP pour les étudiants TI.">
+<title>StudyHub — ISET Nabeul</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--ink:#172033;--muted:#65718a;--line:#e4e9f2;--blue:#315efb;--cyan:#18b6c9;--soft:#edf2ff;--shadow:0 12px 35px #24365b12}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{cursor:pointer;border:0}
+.top{background:#111b35;color:#fff;padding:13px max(20px,calc((100% - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{font-weight:850;font-size:19px;letter-spacing:-.5px}.brand span{color:#70dcf0}.top small{color:#c5cce0}
+.wrap{max-width:1180px;margin:auto;padding:0 22px}.hero{margin:28px auto 22px;background:linear-gradient(120deg,#17264b,#315efb 65%,#20b9c8);border-radius:24px;padding:42px;color:white;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.hero:after{content:"";position:absolute;width:300px;height:300px;border:1px solid #ffffff30;border-radius:50%;right:-55px;top:-105px;box-shadow:0 0 0 35px #ffffff0d,0 0 0 75px #ffffff0a}
+.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:800;color:#b9f4fa}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.1;margin:10px 0}.hero p{max-width:650px;color:#e3eaff;margin:12px 0 22px}.pill{display:inline-flex;background:#ffffff20;border:1px solid #ffffff40;border-radius:30px;padding:7px 13px;font-size:12px}
+.searchrow{display:flex;gap:10px;max-width:620px;position:relative;z-index:1}.searchrow input{flex:1;min-width:0;border:0;border-radius:12px;padding:13px 16px;outline:none}.primary{background:#fff;color:#2149d9;border-radius:12px;padding:12px 17px;font-weight:750}
+.nav{display:flex;gap:8px;overflow:auto;padding:4px 0 18px;scrollbar-width:thin}.nav button{white-space:nowrap;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:9px 14px;border-radius:30px;font-weight:650}.nav button.active{background:var(--blue);color:white;border-color:var(--blue)}
+.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:23px 0 13px}.sectionhead h2{font-size:21px;margin:0;letter-spacing:-.4px}.sectionhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:18px;box-shadow:0 3px 14px #24365b08;transition:.2s}.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--soft);font-size:21px;margin-bottom:12px}.card h3{margin:0 0 5px;font-size:16px}.card p{margin:0;color:var(--muted);font-size:13px}.meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.tag{font-size:11px;color:#3654b9;background:#edf2ff;padding:4px 8px;border-radius:20px;font-weight:700}.open{margin-top:14px;background:#f1f4fb;color:#243b79;border-radius:9px;padding:8px 11px;font-weight:700;font-size:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;margin:15px 0}.hidden{display:none!important}.content h3{margin:0 0 8px}.content p,.content li{color:#4f5b72}.content ul{padding-left:20px}.content .note{background:#f0f5ff;border-left:3px solid var(--blue);padding:12px 14px;border-radius:8px;color:#33456d}
+.player{display:flex;align-items:center;gap:12px;background:#f3f6ff;padding:13px;border-radius:12px;margin-top:12px}.player button{background:var(--blue);color:white;border-radius:50%;width:38px;height:38px}.mind{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:18px 0}.mind span{padding:10px 14px;border:1px solid #ccd7ff;background:#f2f5ff;border-radius:12px;font-weight:700;color:#2947a4}.mind b{background:#254edc;color:white;border-radius:12px;padding:12px 18px}
+footer{margin-top:45px;background:#111b35;color:#d6def2;padding:28px 20px;text-align:center;font-size:13px}footer strong{color:white}
+#detail{scroll-margin-top:15px}.quiz button{display:block;width:100%;text-align:left;padding:10px;margin:8px 0;background:#f3f6fb;border-radius:9px;color:#25314a}.quiz button:hover{background:#e6edff}.status{font-weight:700;margin-top:8px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.hero{padding:30px 23px}.top small{display:none}}
+@media(max-width:540px){.grid{grid-template-columns:1fr}.searchrow{flex-direction:column}.searchrow button{width:100%}.sectionhead{align-items:start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="#"><span>Study</span>Hub <small>· ISET Nabeul</small></a><small>1ère année · Informatique Technologique</small></header>
+<main class="wrap">
+<section class="hero">
+ <div class="eyebrow">Ta plateforme de révision</div>
+ <h1>Apprendre mieux.<br>Réviser plus simplement.</h1>
+ <p>Retrouve tes cours, fiches de révision, podcasts, vidéos, cartes mentales et travaux pratiques dans un seul espace.</p>
+ <span class="pill">🎓 ISET Nabeul · TI 1ère année</span>
+ <div class="searchrow" style="margin-top:20px"><input id="search" type="search" placeholder="Rechercher un cours, un TP, un résumé…"><button class="primary" onclick="searchItems()">Rechercher</button></div>
+</section>
+<nav class="nav" aria-label="Navigation">
+ <button class="active" data-filter="all">Accueil</button><button data-filter="Digital Skills">Digital Skills</button><button data-filter="Fundamental IT">Fundamental IT</button><button data-filter="Système électrique">Système électrique</button><button data-filter="TP">TP ISET</button><button data-filter="Ressources">Podcasts & vidéos</button>
+</nav>
+<div class="sectionhead"><div><h2>Explorer les matières</h2><p>Les ressources essentielles de ton semestre.</p></div></div>
+<section class="grid" id="cards">
+ <article class="card" data-category="Digital Skills" data-search="digital skills bureautique word excel powerpoint internet sécurité numérique">
+  <div class="icon">💻</div><h3>Digital Skills</h3><p>Compétences numériques, bureautique, outils collaboratifs et sécurité.</p><div class="meta"><span class="tag">Cours</span><span class="tag">Résumés</span><span class="tag">Quiz</span></div><button class="open" onclick="showDetail('digital')">Explorer le module →</button>
+ </article>
+ <article class="card" data-category="Fundamental IT" data-search="fundamental it informatique ordinateur processeur ram rom disque dur système exploitation">
+  <div class="icon">🧠</div><h3>Fundamental IT</h3><p>Architecture d'un ordinateur, matériel, logiciels et systèmes.</p><div class="meta"><span class="tag">Fondamentaux</span><span class="tag">Fiches</span></div><button class="open" onclick="showDetail('it')">Explorer le module →</button>
+ </article>
+ <article class="card" data-category="Système électrique" data-search="système électrique electricité tension courant résistance loi ohm circuit">
+  <div class="icon">⚡</div><h3>Système électrique</h3><p>Grandeurs électriques, loi d'Ohm, circuits et mesures.</p><div class="meta"><span class="tag">Formules</span><span class="tag">Exercices</span></div><button class="open" onclick="showDetail('electric')">Explorer le module →</button>
+ </article>
+ <article class="card" data-category="TP" data-search="tp travaux pratiques iset nabeul algorithmique c html réseau électricité">
+  <div class="icon">🧪</div><h3>TP ISET Nabeul</h3><p>Espace pour organiser les énoncés, corrigés et comptes rendus des TP.</p><div class="meta"><span class="tag">PDF</span><span class="tag">Corrections</span></div><button class="open" onclick="showDetail('tp')">Voir les TP →</button>
+ </article>
+ <article class="card" data-category="Ressources" data-search="podcast audio résumé écouter cours">
+  <div class="icon">🎧</div><h3>Podcasts de révision</h3><p>Écoute les résumés de cours avec la lecture audio intégrée.</p><div class="meta"><span class="tag">Audio</span><span class="tag">Révision</span></div><button class="open" onclick="showDetail('podcast')">Écouter →</button>
+ </article>
+ <article class="card" data-category="Ressources" data-search="vidéo cours leçon tutoriel">
+  <div class="icon">🎬</div><h3>Vidéos & leçons</h3><p>Retrouve les vidéos pédagogiques liées à chaque chapitre.</p><div class="meta"><span class="tag">Vidéo</span><span class="tag">Tutoriels</span></div><button class="open" onclick="showDetail('videos')">Voir les vidéos →</button>
+ </article>
+</section>
+<section id="detail" class="panel hidden content" aria-live="polite"></section>
+<section class="sectionhead"><div><h2>Outils pour réussir</h2><p>Des méthodes rapides pour apprendre et vérifier tes acquis.</p></div></section>
+<div class="grid">
+ <article class="card"><div class="icon">🗺️</div><h3>Cartes mentales</h3><p>Une vue d'ensemble des notions principales de chaque chapitre.</p><button class="open" onclick="showDetail('mind')">Ouvrir les cartes →</button></article>
+ <article class="card"><div class="icon">📝</div><h3>Mini-quiz</h3><p>Teste ta compréhension avec des questions rapides.</p><button class="open" onclick="showDetail('quiz')">Commencer →</button></article>
+ <article class="card"><div class="icon">📂</div><h3>Google Classroom / Drive</h3><p>Accès aux espaces de cours et aux documents partagés.</p><a class="open" style="display:inline-block" href="https://classroom.google.com/" target="_blank" rel="noopener">Ouvrir Classroom ↗</a></article>
+</div>
+</main>
+<footer><strong>StudyHub ISET Nabeul</strong><br>Plateforme pédagogique étudiante · 2026<br><span>Les documents officiels et liens de cours seront ajoutés par l'étudiant.</span></footer>
+<script>
+const details={
+digital:`<h3>💻 Digital Skills</h3><p class="note">Fiche de révision — notions générales à compléter avec le support officiel de ton enseignant.</p><h4>Compétences numériques</h4><ul><li>Identifier les composants d'un environnement numérique.</li><li>Créer et organiser des documents et dossiers.</li><li>Utiliser les outils bureautiques et collaboratifs.</li><li>Rechercher, évaluer et citer correctement une information.</li><li>Protéger ses comptes : mots de passe robustes, mises à jour et double authentification.</li></ul><h4>À retenir</h4><p>Une compétence numérique combine la maîtrise des outils, la recherche d'information, la communication et la sécurité.</p>`,
+it:`<h3>🧠 Fundamental IT</h3><p class="note">Résumé introductif pour la première année.</p><h4>Les composants d'un ordinateur</h4><ul><li><b>Processeur (CPU) :</b> exécute les instructions et réalise les traitements.</li><li><b>RAM :</b> mémoire volatile qui conserve temporairement les données utilisées.</li><li><b>ROM :</b> mémoire non volatile contenant notamment des instructions de démarrage.</li><li><b>Disque / SSD :</b> stockage permanent des fichiers et logiciels.</li><li><b>Carte mère :</b> relie les composants et permet leur communication.</li><li><b>Système d'exploitation :</b> gère le matériel, les fichiers et l'exécution des applications.</li></ul><p><b>Conseil :</b> distingue toujours mémoire (RAM) et stockage (SSD/disque).</p>`,
+electric:`<h3>⚡ Système électrique</h3><p class="note">Fiche de base — vérifier les conventions et unités utilisées dans le cours.</p><ul><li><b>Tension U :</b> différence de potentiel, mesurée en volts (V).</li><li><b>Courant I :</b> débit de charges électriques, mesuré en ampères (A).</li><li><b>Résistance R :</b> opposition au passage du courant, mesurée en ohms (Ω).</li></ul><h4>Loi d'Ohm</h4><p class="note"><b>U = R × I</b> &nbsp; donc &nbsp; <b>I = U/R</b> et <b>R = U/I</b>.</p><p>Exemple : pour R = 10 Ω et I = 2 A, U = 20 V.</p><p>En TP : respecter les calibres des appareils et couper l'alimentation avant de modifier un circuit.</p>`,
+tp:`<h3>🧪 Travaux pratiques — ISET Nabeul</h3><p class="note">Dépose ici les PDF officiels de tes enseignants. Aucun TP privé ou document de classe n'est importé automatiquement.</p><ul><li>TP Digital Skills — énoncé / compte rendu</li><li>TP Fundamental IT — composants et système</li><li>TP Système électrique — mesures et circuits</li><li>TP Algorithmique / langage C — exercices et corrections</li></ul><p>Pour ajouter un document, place le fichier dans le dépôt GitHub (par exemple dans <code>documents/</code>), puis ajoute son lien dans cette rubrique.</p>`,
+podcast:`<h3>🎧 Podcasts de révision</h3><p>Choisis un résumé puis utilise la lecture audio. La voix est générée par ton navigateur (synthèse vocale) : ce n'est pas encore un fichier podcast MP3.</p><div class="player"><button onclick="speak('Le processeur est le composant qui exécute les instructions. La mémoire RAM conserve temporairement les données. Le disque SSD stocke durablement les fichiers.')">▶</button><div><b>Fundamental IT — Les composants</b><br><small>Résumé audio généré à la demande</small></div></div><div class="player"><button onclick="speak('La loi d Ohm relie la tension, la résistance et le courant. La tension U est égale à la résistance R multipliée par le courant I.')">▶</button><div><b>Système électrique — Loi d'Ohm</b><br><small>Résumé audio généré à la demande</small></div></div><button class="open" onclick="speechSynthesis.cancel()">Arrêter l'audio</button>`,
+videos:`<h3>🎬 Vidéos de cours</h3><p class="note">Ajoute ici les vidéos créées à partir de tes propres cours ou les liens validés par tes enseignants.</p><ul><li>Digital Skills — prise en main des outils numériques</li><li>Fundamental IT — découvrir les composants d'un ordinateur</li><li>Système électrique — comprendre la loi d'Ohm</li></ul><p>Les emplacements sont prêts : les vidéos apparaîtront dès que leurs liens YouTube ou fichiers MP4 seront ajoutés.</p>`,
+mind:`<h3>🗺️ Carte mentale — Fundamental IT</h3><div class="mind"><b>Ordinateur</b><span>Processeur · calcul</span><span>RAM · temporaire</span><span>SSD · stockage</span><span>Carte mère · connexion</span><span>Périphériques · entrée/sortie</span><span>Système d'exploitation · gestion</span></div><p>Carte de synthèse introductive. Chaque branche peut devenir une fiche détaillée.</p>`,
+quiz:`<h3>📝 Mini-quiz — Fundamental IT</h3><div class="quiz"><p><b>1. Quelle mémoire est volatile ?</b></p><button onclick="answer(this,false)">ROM</button><button onclick="answer(this,true)">RAM</button><button onclick="answer(this,false)">SSD</button><p><b>2. Quel composant exécute les instructions ?</b></p><button onclick="answer(this,true)">Processeur</button><button onclick="answer(this,false)">Écran</button><button onclick="answer(this,false)">Clavier</button><div id="feedback" class="status"></div></div>`
+};
+function showDetail(key){const d=document.getElementById('detail');d.innerHTML=details[key]||'';d.classList.remove('hidden');d.scrollIntoView({behavior:'smooth',block:'start'})}
+function speak(t){if(!('speechSynthesis'in window)){alert("La lecture audio n'est pas prise en charge par ce navigateur.");return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.speak(u)}
+function answer(el,ok){document.getElementById('feedback').textContent=ok?'Bonne réponse !':'Pas tout à fait. Réessaie.';document.getElementById('feedback').style.color=ok?'#16834a':'#c04b35'}
+function searchItems(){const q=document.getElementById('search').value.toLowerCase().trim();document.querySelectorAll('#cards .card').forEach(c=>c.classList.toggle('hidden',q&&!((c.dataset.search||'')+' '+c.innerText.toLowerCase()).includes(q)))}
+document.getElementById('search').addEventListener('input',searchItems);
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const f=b.dataset.filter;document.querySelectorAll('#cards .card').forEach(c=>c.classList.toggle('hidden',f!=='all'&&c.dataset.category!==f));document.getElementById('search').value=''}));
+</script>
+</body></html>
