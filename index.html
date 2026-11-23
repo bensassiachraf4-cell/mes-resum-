@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISET Nabeul — Portail de Révision, Podcasts, Vidéos & Google Classroom</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
+    .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); }
+    @keyframes pulse-wave {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1); }
+    }
+    .wave-bar { animation: pulse-wave 1.1s infinite ease-in-out; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-extrabold shadow-md">
+          TI
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">ISET Nabeul — Hub Révision</h1>
+          <p class="text-xs text-slate-500 hidden sm:block">Résumés • Podcasts • Vidéos • TP • Google Classroom</p>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="flex-1 max-w-md hidden md:block">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input id="searchInput" type="text" placeholder="Rechercher un cours, un TP, une formule..."
+            class="w-full pl-9 pr-4 py-2 text-sm bg-slate-100 border border-transparent focus:border-blue-500 focus:bg-white rounded-xl outline-none transition" />
+        </div>
+      </div>
+
+      <!-- Google Classroom Action -->
+      <div class="flex items-center gap-2">
+        <button id="classroomBtn" onclick="openClassroomModal()"
+          class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+          <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+          <span id="classroomStatusText">Google Classroom</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+      <div class="max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-medium mb-3">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          Plateforme Étudiante • Technologie Informatique (ISET Nabeul)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
+          Révisez chaque module en 3 formats : Fiche, Podcast & Vidéo
+        </h2>
+        <p class="text-slate-300 text-sm sm:text-base">
+          Accédez aux synthèses de cours, écoutez les résumés audio en déplacement, visionnez les capsules vidéo et importez directement vos supports et TP depuis Google Classroom.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
+        <div class="bg-white/10 border border-white/10 rounded-xl p-3 text-center">
+          <div id="statCourses" class="text-xl font-bold text-white">0</div>
+          <div class="text-xs text-slate-300">Modules & TP</div>
+        </div>
+        <div class="bg-white/10 border border-white/10 rounded-xl p-3 text-center">
+          <div id="statPodcasts" class="text-xl font-bold text-amber-400">0</div>
+          <div class="text-xs text-slate-300">Podcasts Audio</div>
+        </div>
+        <div class="bg-white/10 border border-white/10 rounded-xl p-3 text-center">
+          <div id="statVideos" class="text-xl font-bold text-sky-400">0</div>
+          <div class="text-xs text-slate-300">Vidéos Cours</div>
+        </div>
+        <div class="bg-white/10 border border-white/10 rounded-xl p-3 text-center">
+          <div id="statClassroom" class="text-xl font-bold text-emerald-400">Prêt</div>
+          <div class="text-xs text-slate-300">Sync Classroom</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module Filter Bar -->
+  <nav class="bg-white border-b border-slate-200 sticky top-16 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto py-3 no-scrollbar">
+      <button onclick="filterCategory('all')" data-cat="all"
+        class="cat-btn px-4 py-1.5 rounded-full text-sm font-semibold bg-blue-600 text-white whitespace-nowrap transition">
+        Tout afficher
+      </button>
+      <button onclick="filterCategory('Digital Skills')" data-cat="Digital Skills"
+        class="cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 whitespace-nowrap transition">
+        💻 Digital Skills
+      </button>
+      <button onclick="filterCategory('Fundamental IT')" data-cat="Fundamental IT"
+        class="cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 whitespace-nowrap transition">
+        🖥️ Fundamental IT
+      </button>
+      <button onclick="filterCategory('Systèmes Électriques')" data-cat="Systèmes Électriques"
+        class="cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 whitespace-nowrap transition">
+        ⚡ Systèmes Électriques
+      </button>
+      <button onclick="filterCategory('TP ISET Nabeul')" data-cat="TP ISET Nabeul"
+        class="cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 whitespace-nowrap transition">
+        🛠️ TP ISET Nabeul
+      </button>
+      <button onclick="openGeneratorModal()"
+        class="ml-auto px-4 py-1.5 rounded-full text-sm font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 whitespace-nowrap transition flex items-center gap-1.5">
+        <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter un cours / TP
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Search -->
+  <div class="max-w-7xl mx-auto px-4 pt-4 md:hidden w-full">
+    <input id="searchInputMobile" type="text" placeholder="Rechercher un module, un TP..."
+      class="w-full px-4 py-2 text-sm bg-white border border-slate-200 rounded-xl outline-none focus:border-blue-500" />
+  </div>
+
+  <!-- Main Grid -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+    <div id="cardsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+    <div id="emptyState" class="hidden text-center py-16">
+      <p class="text-slate-500 text-base">Aucun cours ou TP ne correspond à votre recherche.</p>
+    </div>
+  </main>
+
+  <!-- Google Classroom Modal -->
+  <div id="classroomModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 bg-emerald-600 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          <div>
+            <h3 class="font-bold text-lg">Connexion Google Classroom — ISET Nabeul</h3>
+            <p class="text-xs text-emerald-100">Importez vos cours, supports PDF et énoncés de TP</p>
+          </div>
+        </div>
+        <button onclick="closeClassroomModal()" class="p-1 rounded-lg hover:bg-emerald-700 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+        <!-- Step 1: OAuth Configuration -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">1. Compte & Clé API Google</span>
+            <span id="oauthBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-medium">Mode Démo / Prêt OAuth</span>
+          </div>
+          <p class="text-xs text-slate-600 mb-3">
+            Renseignez votre <strong>Client ID Google Cloud</strong> (avec le scope <code>classroom.courses.readonly</code> et <code>classroom.courseworkmaterials.readonly</code>) pour synchroniser vos vraies classes ISET Nabeul, ou utilisez l'importation directe ci-dessous.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="googleClientId" type="text" placeholder="Ex: 123456789-abc.apps.googleusercontent.com"
+              class="flex-1 px-3 py-2 text-xs border border-slate-300 rounded-lg focus:border-emerald-500 outline-none" />
+            <button onclick="simulateClassroomConnect()"
+              class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition whitespace-nowrap">
+              Connecter mon compte
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Available Classroom Items -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">2. Supports détectés sur Google Classroom</span>
+            <button onclick="importAllClassroom()" class="text-xs font-semibold text-blue-600 hover:underline">
+              + Tout importer et générer Résumé/Podcast/Vidéo
+            </button>
+          </div>
+
+          <div id="classroomItemsList" class="space-y-2.5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generator Modal (Create Summary + Podcast + Video from raw course/TP) -->
+  <div id="generatorModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 bg-indigo-600 text-white flex items-center justify-between">
+        <h3 class="font-bold text-lg">Générer Fiche + Podcast + Vidéo</h3>
+        <button onclick="closeGeneratorModal()" class="p-1 rounded-lg hover:bg-indigo-700 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form onsubmit="handleCustomCourseSubmit(event)" class="p-6 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Matière / Module</label>
+            <select id="newCategory" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500">
+              <option value="Digital Skills">Digital Skills</option>
+              <option value="Fundamental IT">Fundamental IT</option>
+              <option value="Systèmes Électriques">Systèmes Électriques</option>
+              <option value="TP ISET Nabeul">TP ISET Nabeul</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Code / Chapitre</label>
+            <input id="newCode" type="text" required placeholder="Ex: Chapitre 4 / TP 03"
+              class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Titre du Cours ou du TP</label>
+          <input id="newTitle" type="text" required placeholder="Ex: Les Pointeurs et Allocation Dynamique en C"
+            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Contenu brut du cours / Notes (génère automatiquement le résumé et le script podcast)</label>
+          <textarea id="newRawText" rows="4" required placeholder="Collez ici vos notes de cours ou l'énoncé du TP..."
+            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Formule clé ou Commande essentielle</label>
+          <input id="newFormula" type="text" placeholder="Ex: int *p = (int*)malloc(n * sizeof(int));"
+            class="w-full px-3 py-2 text-sm font-mono bg-slate-50 border border-slate-300 rounded-lg outline-none focus:border-indigo-500" />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeGeneratorModal()" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Annuler</button>
+          <button type="submit" class="px-5 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow">
+            Créer le module complet
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 px-4 text-center text-xs text-slate-500">
+    <p>Plateforme de Révision Étudiante — <strong>ISET Nabeul</strong> • Déployable gratuitement sur <strong>GitHub Pages</strong>.</p>
+  </footer>
+
+  <script>
+    const defaultCourses = [
+      {
+        id: 'ds-1',
+        category: 'Digital Skills',
+        code: 'DS • Module 01',
+        title: 'Identité Numérique, Cloud & Outils Collaboratifs',
+        durationAudio: '04:20',
+        durationVideo: '06:45',
+        summaryPoints: [
+          'Gestion sécurisée de l’identité numérique universitaire (@isetnabeul.rnu.tn) et authentification à deux facteurs (2FA).',
+          'Organisation du stockage Cloud (Google Drive, GitHub) : arborescence par semestre, gestion des droits de partage et versioning.',
+          'Recherche documentaire avancée (opérateurs booléens AND, OR, filetype:pdf) et veille technologique.'
+        ],
+        formula: 'site:isetn.rnu.tn filetype:pdf "Technologie Informatique"',
+        podcastScript: 'Bienvenue dans ce résumé audio de Digital Skills. Aujourd’hui, nous retenons trois piliers essentiels : la protection de votre identité numérique avec la double authentification, la structuration rigoureuse de vos dossiers sur Google Drive et GitHub, et l’utilisation des opérateurs de recherche avancée pour trouver rapidement des supports académiques fiables.',
+        videoChapters: [
+          { time: '00:00', label: 'Introduction & Sécurité 2FA' },
+          { time: '02:15', label: 'Architecture Cloud & GitHub' },
+          { time: '04:30', label: 'Opérateurs de recherche Google' }
+        ],
+        videoSlides: [
+          '1. Protéger son compte étudiant avec le 2FA',
+          '2. Structurer ses dépôts GitHub & Drive par module',
+          '3. Maîtriser filetype:pdf et site: pour la recherche'
+        ]
+      },
+      {
+        id: 'fit-1',
+        category: 'Fundamental IT',
+        code: 'FIT • Chapitre 01',
+        title: 'Codage de l’Information & Architecture Von Neumann',
+        durationAudio: '05:40',
+        durationVideo: '08:15',
+        summaryPoints: [
+          'Conversion entre bases numériques : Binaire (base 2), Octal (base 8), Décimal (base 10) et Hexadécimal (base 16).',
+          'Représentation des entiers signés en Complément à 2 (CA2) sur n bits : intervalle de -2^(n-1) à +2^(n-1) - 1.',
+          'Architecture de Von Neumann : Unité Arithmétique et Logique (UAL), Unité de Contrôle (UC), Mémoire Centrale et Bus (Données, Adresses, Contrôle).'
+        ],
+        formula: 'CA2(N) = Inverser les bits de |N| + 1  |  Intervalle 8 bits : [-128, +127]',
+        podcastScript: 'Dans ce chapitre de Fundamental IT, retenons comment l’ordinateur manipule les données. Tout nombre négatif est codé en complément à deux : on inverse chaque bit puis on ajoute un. Côté matériel, l’architecture de Von Neumann relie le processeur, composé de l’UAL et de l’unité de contrôle, à la mémoire centrale via trois bus : adresses, données et contrôle.',
+        videoChapters: [
+          { time: '00:00', label: 'Conversions Binaire & Hexadécimal' },
+          { time: '03:10', label: 'Complément à 2 (Nombres signés)' },
+          { time: '05:50', label: 'Schéma complet Von Neumann' }
+        ],
+        videoSlides: [
+          'Base 2 <-> Base 16 : Regroupement par 4 bits',
+          'Complément à 2 : Bit de poids fort = signe (1 = négatif)',
+          'CPU = UAL + Unité de Contrôle + Registres'
+        ]
+      },
+      {
+        id: 'se-1',
+        category: 'Systèmes Électriques',
+        code: 'SE • Chapitre 01',
+        title: 'Lois Fondamentales des Circuits : Ohm, Kirchhoff & Thévenin',
+        durationAudio: '05:10',
+        durationVideo: '07:30',
+        summaryPoints: [
+          'Loi des Nœuds (KCL) : la somme des courants entrants dans un nœud est égale à la somme des courants sortants.',
+          'Loi des Mailles (KVL) : la somme algébrique des tensions le long d’une maille fermée est nulle.',
+          'Théorème de Thévenin : tout dipôle linéaire actif est équivalent à une source de tension Eth en série avec une résistance Rth.'
+        ],
+        formula: 'U = R · I   |   ∑ I_entrants = ∑ I_sortants   |   U_AB = E_th - R_th · I',
+        podcastScript: 'Révisons les lois des systèmes électriques. Premièrement, la loi des nœuds conserve la charge électrique : tout courant qui entre ressort. Deuxièmement, la loi des mailles stipule que la somme des tensions sur une boucle fermée vaut zéro. Enfin, pour simplifier un circuit complexe, calculez Eth à vide et Rth en éteignant toutes les sources indépendantes.',
+        videoChapters: [
+          { time: '00:00', label: 'Loi d’Ohm & Diviseur de tension' },
+          { time: '02:40', label: 'Lois de Kirchhoff (Nœuds & Mailles)' },
+          { time: '05:00', label: 'Méthode de Thévenin étape par étape' }
+        ],
+        videoSlides: [
+          'Diviseur de tension : U1 = E · R1 / (R1 + R2)',
+          'Rth : Court-circuiter les sources de tension, ouvrir les sources de courant',
+          'Eth : Tension mesurée à vide aux bornes A et B'
+        ]
+      },
+      {
+        id: 'tp-1',
+        category: 'TP ISET Nabeul',
+        code: 'TP 01 • Atelier C & Linux',
+        title: 'TP Programmation C (GCC) & Commandes de Base Linux',
+        durationAudio: '04:50',
+        durationVideo: '09:10',
+        summaryPoints: [
+          'Navigation et gestion de fichiers sous terminal Ubuntu/Linux : pwd, ls -la, mkdir, cp, mv, chmod 755.',
+          'Cycle de compilation d’un programme C avec GCC : préprocesseur, compilation, assemblage et édition de liens.',
+          'Manipulation des entrées/sorties formatées (printf, scanf) et structures conditionnelles / boucles (for, while).'
+        ],
+        formula: 'gcc -Wall -Wextra main.c -o programme && ./programme',
+        podcastScript: 'Pour réussir votre TP à l’ISET Nabeul, maîtrisez d’abord le terminal Linux : créez votre répertoire de travail avec mkdir, vérifiez vos droits avec ls moins l, et compilez systématiquement votre code C avec les options moins Wall et moins Wextra pour détecter toutes les erreurs avant l’exécution.',
+        videoChapters: [
+          { time: '00:00', label: 'Commandes essentielles du Terminal' },
+          { time: '03:20', label: 'Compilation GCC avec -Wall' },
+          { time: '06:15', label: 'Correction type exercice Tableaux C' }
+        ],
+        videoSlides: [
+          'chmod +x script.sh : Rendre un fichier exécutable',
+          'Toujours passer l’adresse &x dans scanf("%d", &x)',
+          'Compiler avec gcc -Wall pour éviter les bugs silencieux'
+        ]
+      },
+      {
+        id: 'tp-2',
+        category: 'TP ISET Nabeul',
+        code: 'TP 02 • Web HTML5/CSS3',
+        title: 'TP Développement Web : Structure Sémantique & Flexbox',
+        durationAudio: '04:05',
+        durationVideo: '06:50',
+        summaryPoints: [
+          'Balises sémantiques HTML5 indispensables : <header>, <nav>, <main>, <section>, <article> et <footer>.',
+          'Mise en page moderne avec CSS Flexbox : display: flex, justify-content, align-items et flex-wrap.',
+          'Déploiement d’un site statique directement depuis un dépôt GitHub via GitHub Pages.'
+        ],
+        formula: 'display: flex; justify-content: space-between; align-items: center;',
+        podcastScript: 'Dans ce TP Web, remplacez les balises div génériques par des balises sémantiques comme header, nav et main. Utilisez Flexbox pour aligner vos cartes sur une ligne flexible, puis poussez votre code sur GitHub et activez GitHub Pages dans les paramètres du dépôt pour obtenir votre lien public.',
+        videoChapters: [
+          { time: '00:00', label: 'Architecture HTML5 Sémantique' },
+          { time: '02:30', label: 'Alignement CSS Flexbox' },
+          { time: '04:45', label: 'Mise en ligne sur GitHub Pages' }
+        ],
+        videoSlides: [
+          'Structure propre : <!DOCTYPE html> + meta viewport',
+          'Flexbox : axe principal (justify-content) vs secondaire (align-items)',
+          'GitHub -> Settings -> Pages -> Branch: main'
+        ]
+      }
+    ];
+
+    const classroomMockFeed = [
+      {
+        id: 'gc-101',
+        category: 'Systèmes Électriques',
+        code: 'Classroom • TD/TP 02',
+        title: 'Circuits RC et Régime Transitoire (Importé Classroom)',
+        rawText: 'Étude de la charge et de la décharge d’un condensateur à travers une résistance R. Constante de temps tau = R * C. À t = tau, le condensateur est chargé à 63% de la tension E.',
+        formula: 'τ = R · C   |   u_C(t) = E · (1 - e^(-t/τ))'
+      },
+      {
+        id: 'gc-102',
+        category: 'Fundamental IT',
+        code: 'Classroom • Cours 03',
+        title: 'Algèbre de Boole & Portes Logiques (Importé Classroom)',
+        rawText: 'Simplification des fonctions logiques par les théorèmes de De Morgan et les tableaux de Karnaugh. Portes universelles NAND et NOR.',
+        formula: 'NOT(A · B) = NOT(A) + NOT(B)   |   NOT(A + B) = NOT(A) · NOT(B)'
+      },
+      {
+        id: 'gc-103',
+        category: 'TP ISET Nabeul',
+        code: 'Classroom • TP 03',
+        title: 'TP Systèmes Logiques & Simulateur Logisim (Importé Classroom)',
+        rawText: 'Réalisation d’un additionneur complet 1 bit et d’un multiplexeur 4 vers 1 sous Logisim. Vérification de la table de vérité.',
+        formula: 'S = A ⊕ B ⊕ Cin   |   Cout = (A · B) + (Cin · (A ⊕ B))'
+      }
+    ];
+
+    let courses = JSON.parse(localStorage.getItem('iset_nabeul_courses')) || defaultCourses;
+    let currentCategory = 'all';
+    let currentSearch = '';
+    let activeSpeechId = null;
+
+    function saveCourses() {
+      localStorage.setItem('iset_nabeul_courses', JSON.stringify(courses));
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('statCourses').textContent = courses.length;
+      document.getElementById('statPodcasts').textContent = courses.length;
+      document.getElementById('statVideos').textContent = courses.length;
+    }
+
+    function getCategoryBadgeColor(cat) {
+      switch(cat) {
+        case 'Digital Skills': return 'bg-sky-100 text-sky-800 border-sky-200';
+        case 'Fundamental IT': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+        case 'Systèmes Électriques': return 'bg-amber-100 text-amber-800 border-amber-200';
+        case 'TP ISET Nabeul': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        default: return 'bg-slate-100 text-slate-800 border-slate-200';
+      }
+    }
+
+    function renderCourses() {
+      const grid = document.getElementById('cardsGrid');
+      const empty = document.getElementById('emptyState');
+      const filtered = courses.filter(c => {
+        const matchCat = currentCategory === 'all' || c.category === currentCategory;
+        const q = currentSearch.toLowerCase();
+        const matchSearch = !q ||
+          c.title.toLowerCase().includes(q) ||
+          c.category.toLowerCase().includes(q) ||
+          c.code.toLowerCase().includes(q) ||
+          c.summaryPoints.some(p => p.toLowerCase().includes(q));
+        return matchCat && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+
+      grid.innerHTML = filtered.map(c => `
+        <article class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
+          <!-- Card Header -->
+          <div class="p-5 border-b border-slate-100">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${getCategoryBadgeColor(c.category)}">
+                ${c.category}
+              </span>
+              <span class="text-xs font-mono text-slate-400">${c.code}</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 leading-snug">${c.title}</h3>
+          </div>
+
+          <!-- Format Switcher Tabs -->
+          <div class="grid grid-cols-3 border-b border-slate-200 bg-slate-50/70 text-xs sm:text-sm">
+            <button onclick="switchCardTab('${c.id}', 'summary')" id="tab-btn-${c.id}-summary"
+              class="py-2.5 px-2 flex items-center justify-center gap-1.5 tab-active transition">
+              <i data-lucide="file-text" class="w-4 h-4"></i> Résumé
+            </button>
+            <button onclick="switchCardTab('${c.id}', 'podcast')" id="tab-btn-${c.id}-podcast"
+              class="py-2.5 px-2 flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition">
+              <i data-lucide="headphones" class="w-4 h-4"></i> Podcast (${c.durationAudio})
+            </button>
+            <button onclick="switchCardTab('${c.id}', 'video')" id="tab-btn-${c.id}-video"
+              class="py-2.5 px-2 flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition">
+              <i data-lucide="play-circle" class="w-4 h-4"></i> Vidéo (${c.durationVideo})
+            </button>
+          </div>
+
+          <!-- Tab 1: Résumé -->
+          <div id="panel-${c.id}-summary" class="p-5 flex-1 flex flex-col justify-between space-y-4">
+            <ul class="space-y-2.5 text-sm text-slate-700">
+              ${c.summaryPoints.map(pt => `
+                <li class="flex items-start gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 shrink-0"></span>
+                  <span>${pt}</span>
+                </li>
+              `).join('')}
+            </ul>
+            ${c.formula ? `
+              <div class="bg-slate-900 text-emerald-300 font-mono text-xs p-3 rounded-xl border border-slate-800 overflow-x-auto">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400 mb-1">À retenir / Formule clé</div>
+                ${c.formula}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Tab 2: Podcast Audio -->
+          <div id="panel-${c.id}-podcast" class="hidden p-5 flex-1 flex flex-col justify-between space-y-4 bg-gradient-to-b from-amber-50/40 to-white">
+            <div class="bg-slate-900 text-white rounded-xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <button onclick="togglePodcast('${c.id}')" id="play-btn-${c.id}"
+                    class="w-11 h-11 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg transition">
+                    <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                  </button>
+                  <div>
+                    <div class="text-xs text-amber-400 font-semibold">Podcast Révision IA • Français</div>
+                    <div class="text-sm font-bold line-clamp-1">${c.title}</div>
+                  </div>
+                </div>
+                <select id="rate-${c.id}" class="bg-slate-800 text-xs text-white px-2 py-1 rounded border border-slate-700">
+                  <option value="1">1.0x</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x</option>
+                </select>
+              </div>
+
+              <!-- Animated Audio Bars -->
+              <div id="wave-${c.id}" class="flex items-center justify-center gap-1 h-8 opacity-40">
+                ${Array.from({length: 24}).map((_, idx) => `<span class="w-1 bg-amber-400 rounded-full h-6" style="animation-delay:${idx*0.07}s"></span>`).join('')}
+              </div>
+            </div>
+
+            <div class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <span class="font-semibold text-slate-800">Transcription du podcast :</span> « ${c.podcastScript} »
+            </div>
+          </div>
+
+          <!-- Tab 3: Vidéo Cours -->
+          <div id="panel-${c.id}-video" class="hidden p-5 flex-1 flex flex-col justify-between space-y-4">
+            <div class="relative rounded-xl overflow-hidden bg-slate-950 aspect-video flex flex-col items-center justify-center p-6 text-center border border-slate-800">
+              <span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-bold uppercase">Capsule Vidéo HD</span>
+              <div id="slide-display-${c.id}" class="text-white font-bold text-base sm:text-lg max-w-md">
+                ${c.videoSlides[0]}
+              </div>
+              <div class="mt-4 flex items-center gap-2">
+                ${c.videoSlides.map((_, i) => `
+                  <button onclick="setVideoSlide('${c.id}', ${i})"
+                    class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/15 hover:bg-blue-600 text-white transition">
+                    Slide ${i + 1}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="text-xs font-semibold text-slate-500 uppercase">Chapitres de la vidéo</div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                ${c.videoChapters.map((ch, idx) => `
+                  <button onclick="setVideoSlide('${c.id}', ${idx})"
+                    class="text-left p-2 rounded-lg bg-slate-50 hover:bg-blue-50 border border-slate-200 transition">
+                    <span class="text-[11px] font-mono font-bold text-blue-600 block">${ch.time}</span>
+                    <span class="text-xs text-slate-700 line-clamp-1">${ch.label}</span>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function switchCardTab(id, tab) {
+      ['summary', 'podcast', 'video'].forEach(t => {
+        document.getElementById(`panel-${id}-${t}`).classList.add('hidden');
+        document.getElementById(`tab-btn-${id}-${t}`).classList.remove('tab-active');
+        document.getElementById(`tab-btn-${id}-${t}`).classList.add('text-slate-600');
+      });
+      document.getElementById(`panel-${id}-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-btn-${id}-${tab}`);
+      activeBtn.classList.add('tab-active');
+      activeBtn.classList.remove('text-slate-600');
+    }
+
+    function setVideoSlide(id, index) {
+      const course = courses.find(c => c.id === id);
+      if (course && course.videoSlides[index]) {
+        document.getElementById(`slide-display-${id}`).textContent = course.videoSlides[index];
+      }
+    }
+
+    function togglePodcast(id) {
+      const course = courses.find(c => c.id === id);
+      if (!course) return;
+
+      if (!('speechSynthesis' in window)) {
+        alert("Votre navigateur ne supporte pas la synthèse vocale audio.");
+        return;
+      }
+
+      if (activeSpeechId === id) {
+        window.speechSynthesis.cancel();
+        resetWave(id);
+        activeSpeechId = null;
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      if (activeSpeechId) resetWave(activeSpeechId);
+
+      const utterance = new SpeechSynthesisUtterance(course.podcastScript);
+      utterance.lang = 'fr-FR';
+      utterance.rate = parseFloat(document.getElementById(`rate-${id}`).value || '1');
+
+      const wave = document.getElementById(`wave-${id}`);
+      wave.classList.remove('opacity-40');
+      wave.querySelectorAll('span').forEach(s => s.classList.add('wave-bar'));
+
+      utterance.onend = () => {
+        resetWave(id);
+        activeSpeechId = null;
+      };
+
+      activeSpeechId = id;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function resetWave(id) {
+      const wave = document.getElementById(`wave-${id}`);
+      if (!wave) return;
+      wave.classList.add('opacity-40');
+      wave.querySelectorAll('span').forEach(s => s.classList.remove('wave-bar'));
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = 'cat-btn px-4 py-1.5 rounded-full text-sm font-semibold bg-blue-600 text-white whitespace-nowrap transition';
+        } else {
+          btn.className = 'cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 whitespace-nowrap transition';
+        }
+      });
+      renderCourses();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', e => {
+      currentSearch = e.target.value;
+      renderCourses();
+    });
+    document.getElementById('searchInputMobile').addEventListener('input', e => {
+      currentSearch = e.target.value;
+      renderCourses();
+    });
+
+    // Classroom Modal Logic
+    function openClassroomModal() {
+      renderClassroomFeed();
+      document.getElementById('classroomModal').classList.remove('hidden');
+    }
+    function closeClassroomModal() {
+      document.getElementById('classroomModal').classList.add('hidden');
+    }
+
+    function simulateClassroomConnect() {
+      const badge = document.getElementById('oauthBadge');
+      badge.textContent = 'Connecté • ISET Nabeul';
+      badge.className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold';
+      document.getElementById('classroomStatusText').textContent = 'Classroom Connecté';
+      document.getElementById('statClassroom').textContent = 'Actif';
+    }
+
+    function renderClassroomFeed() {
+      const container = document.getElementById('classroomItemsList');
+      container.innerHTML = classroomMockFeed.map(item => {
+        const alreadyImported = courses.some(c => c.id === item.id);
+        return `
+          <div class="p-3.5 rounded-xl border border-slate-200 flex items-center justify-between gap-3 bg-white">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">${item.category}</span>
+                <span class="text-xs text-slate-400">${item.code}</span>
+              </div>
+              <div class="font-semibold text-sm text-slate-900 mt-1">${item.title}</div>
+            </div>
+            <button onclick="importSingleClassroom('${item.id}')" ${alreadyImported ? 'disabled' : ''}
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
+                alreadyImported
+                  ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }">
+              ${alreadyImported ? 'Importé ✓' : 'Importer'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function buildCourseObjectFromRaw(id, category, code, title, rawText, formula) {
+      const sentences = rawText.split('.').map(s => s.trim()).filter(Boolean);
+      const summaryPoints = sentences.length >= 2
+        ? sentences.slice(0, 3).map(s => s + '.')
+        : [rawText, 'Support importé et structuré automatiquement pour la révision rapide.'];
+
+      return {
+        id,
+        category,
+        code,
+        title,
+        durationAudio: '03:45',
+        durationVideo: '05:30',
+        summaryPoints,
+        formula: formula || '',
+        podcastScript: `Résumé audio du module ${title}. ${rawText}`,
+        videoChapters: [
+          { time: '00:00', label: 'Notions clés du cours' },
+          { time: '02:00', label: 'Application & Formules' },
+          { time: '04:00', label: 'Synthèse Examen / TP' }
+        ],
+        videoSlides: [
+          title,
+          summaryPoints[0],
+          formula || 'Révision complète prête pour l’examen'
+        ]
+      };
+    }
+
+    function importSingleClassroom(id) {
+      const item = classroomMockFeed.find(i => i.id === id);
+      if (!item || courses.some(c => c.id === id)) return;
+      const newObj = buildCourseObjectFromRaw(item.id, item.category, item.code, item.title, item.rawText, item.formula);
+      courses.unshift(newObj);
+      saveCourses();
+      renderCourses();
+      renderClassroomFeed();
+    }
+
+    function importAllClassroom() {
+      classroomMockFeed.forEach(item => {
+        if (!courses.some(c => c.id === item.id)) {
+          courses.unshift(buildCourseObjectFromRaw(item.id, item.category, item.code, item.title, item.rawText, item.formula));
+        }
+      });
+      saveCourses();
+      renderCourses();
+      renderClassroomFeed();
+      simulateClassroomConnect();
+    }
+
+    // Generator Modal Logic
+    function openGeneratorModal() {
+      document.getElementById('generatorModal').classList.remove('hidden');
+    }
+    function closeGeneratorModal() {
+      document.getElementById('generatorModal').classList.add('hidden');
+    }
+
+    function handleCustomCourseSubmit(e) {
+      e.preventDefault();
+      const cat = document.getElementById('newCategory').value;
+      const code = document.getElementById('newCode').value;
+      const title = document.getElementById('newTitle').value;
+      const raw = document.getElementById('newRawText').value;
+      const formula = document.getElementById('newFormula').value;
+
+      const newCourse = buildCourseObjectFromRaw('custom-' + Date.now(), cat, code, title, raw, formula);
+      courses.unshift(newCourse);
+      saveCourses();
+      renderCourses();
+      e.target.reset();
+      closeGeneratorModal();
+    }
+
+    // Init
+    updateStats();
+    renderCourses();
+    lucide.createIcons();
+  </script>
+</body>
+</html>
